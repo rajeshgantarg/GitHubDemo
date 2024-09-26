@@ -10,7 +10,7 @@ on:
 
 jobs:
   android-tests:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     strategy:
       matrix:
         node-version: [20.x]
