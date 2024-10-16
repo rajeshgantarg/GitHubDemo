@@ -34,9 +34,6 @@ jobs:
         with:
           node-version: '20'  # Specify a specific Node.js version
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Wait for emulator to boot
         run: |
           adb wait-for-device
