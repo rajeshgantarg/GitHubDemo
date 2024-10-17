@@ -1,4 +1,4 @@
-name: Workflow for Android APP
+name: Workflow for Android App
 
 on:
   push:
@@ -23,48 +23,24 @@ jobs:
         with:
           sdk-version: '34'
 
-      - name: Download Emulator
-        uses: android-actions/setup-android@v3.2.0
-        with:
-          api-level: '34'
-          target: 'default'
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Specify a specific Node.js version
+          node-version: '20'
 
-      - name: Create AVD and start the emulator
-        shell: pwsh
-        run: |
-          echo "Creating emulator..."
-          & "$env:ANDROID_HOME\emulator\emulator.exe" -list-avds  # List available AVDs
-          echo "Starting emulator..."
-          & "$env:ANDROID_HOME\emulator\emulator.exe" -avd SamsungGalaxy -no-snapshot-save -no-boot-anim -no-audio -no-window &
-    
-      - name: Wait for Emulator to Boot
-        shell: pwsh
-        run: |
-          echo "Waiting for emulator to boot..."
-          adb wait-for-device
-          $boot_completed = "0"
-          while ($boot_completed -ne "1") {
-          echo "Checking boot status..."
-          $boot_completed = adb shell getprop sys.boot_completed
-          Start-Sleep -Seconds 10
-          }
-          echo "Emulator booted successfully!"
-
-      - name: Verify Emulator is Running
-        run: adb devices  # Ensure the emulator is detected
-
-      - name: Verify Boot Animation Stopped
-        run: adb shell getprop init.svc.bootanim  # Check if boot animation has stopped
-
-
-      - name: Wait for emulator to boot
-        run: |
-          adb devices
-
-      - name: Verify Emulator is Running
-        run: adb shell getprop init.svc.bootanim  # Ensure the boot animation has stopped
+      - name: Android Emulator Runner
+        uses: ReactiveCircus/android-emulator-runner@v2.33.0
+        with:
+          api-level: 34                   # Specify the API level for your Android version
+          target: google_apis              # Use Google APIs as the target system image
+          arch: x86_64                     # CPU architecture (x86, x86_64, arm64-v8a)
+          profile: pixel_5                 # Specify a hardware profile (e.g., Pixel 5)
+          cores: 2                         # Optional, number of CPU cores for the emulator
+          ram-size: 2048M                  # Optional, RAM size for the emulator
+          heap-size: 512M                  # Optional, heap size for the emulator
+          sdcard-path-or-size: 512M        # Optional, specify SD card size for the emulator
+          disk-size: 4G                    # Optional, set disk size
+          avd-name: testAVD                # Custom name for the emulator
+          force-avd-creation: true         # Force create the AVD even if it already exists
+          emulator-boot-timeout: 600       # Emulator boot timeout in seconds (10 minutes)
+          emulator-options: -no-window
