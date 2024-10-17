@@ -35,12 +35,31 @@ jobs:
           node-version: '20'  # Specify a specific Node.js version
 
       - name: Create AVD and start the emulator
-        shell: pwsh  # This specifies PowerShell as the shell for this job step
+        shell: pwsh
         run: |
           echo "Creating emulator..."
           & "$env:ANDROID_HOME\emulator\emulator.exe" -list-avds  # List available AVDs
           echo "Starting emulator..."
           & "$env:ANDROID_HOME\emulator\emulator.exe" -avd SamsungGalaxy -no-snapshot-save -no-boot-anim -no-audio -no-window &
+    
+      - name: Wait for Emulator to Boot
+        shell: pwsh
+        run: |
+          echo "Waiting for emulator to boot..."
+          adb wait-for-device
+          $boot_completed = "0"
+          while ($boot_completed -ne "1") {
+          echo "Checking boot status..."
+          $boot_completed = adb shell getprop sys.boot_completed
+          Start-Sleep -Seconds 10
+          }
+          echo "Emulator booted successfully!"
+
+      - name: Verify Emulator is Running
+        run: adb devices  # Ensure the emulator is detected
+
+      - name: Verify Boot Animation Stopped
+        run: adb shell getprop init.svc.bootanim  # Check if boot animation has stopped
 
 
       - name: Wait for emulator to boot
