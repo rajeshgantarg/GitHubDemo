@@ -4,7 +4,6 @@ on:
   push:
     branches: [ "main" ]
 
-
 jobs:
   build:
     runs-on: windows-latest
@@ -35,7 +34,18 @@ jobs:
         with:
           node-version: '20'  # Specify a specific Node.js version
 
+      # Create and start the Android emulator
+      - name: Create AVD and start the emulator
+        run: |
+          echo "Creating emulator..."
+          $ANDROID_HOME/emulator/emulator -list-avds  # List available AVDs
+          echo "Starting emulator..."
+          $ANDROID_HOME/emulator/emulator -avd <Your_AVD_Name> -no-snapshot-save -no-boot-anim -no-audio -no-window &
+        
       - name: Wait for emulator to boot
         run: |
           adb wait-for-device
           adb devices
+
+      - name: Verify Emulator is Running
+        run: adb shell getprop init.svc.bootanim  # Ensure the boot animation has stopped
