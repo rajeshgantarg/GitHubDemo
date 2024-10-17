@@ -40,7 +40,7 @@ jobs:
           echo "Creating emulator..."
           $ANDROID_HOME/emulator/emulator -list-avds  # List available AVDs
           echo "Starting emulator..."
-          $ANDROID_HOME/emulator/emulator -avd <Your_AVD_Name> -no-snapshot-save -no-boot-anim -no-audio -no-window &
+          $ANDROID_HOME/emulator/emulator -avd SamsungGalaxy -no-snapshot-save -no-boot-anim -no-audio -no-window &
         
       - name: Wait for emulator to boot
         run: |
