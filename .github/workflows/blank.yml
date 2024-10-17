@@ -45,7 +45,6 @@ jobs:
 
       - name: Wait for emulator to boot
         run: |
-          adb wait-for-device
           adb devices
 
       - name: Verify Emulator is Running
